@@ -340,54 +340,146 @@ body.dark .tab:hover {
 .slider-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  position: relative;
 }
 
 #lengthSlider {
-  width: 120px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--navy-sky-lightest);
+  width: 160px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    to right,
+    var(--navy-sky) 0%,
+    var(--navy-sky) 33.33%,
+    var(--navy-sky-lighter) 33.33%,
+    var(--navy-sky-lighter) 66.66%,
+    var(--navy-sky-lightest) 66.66%,
+    var(--navy-sky-lightest) 100%
+  );
   outline: none;
   -webkit-appearance: none;
+  cursor: pointer;
+  border: 2px solid var(--navy-sky-lighter);
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(95, 158, 160, 0.15);
+}
+
+#lengthSlider:hover {
+  border-color: var(--navy-sky);
+  box-shadow: inset 0 2px 4px rgba(95, 158, 160, 0.2), 0 0 0 3px rgba(95, 158, 160, 0.1);
+  transform: translateY(-1px);
+}
+
+body.dark #lengthSlider {
+  background: linear-gradient(
+    to right,
+    var(--navy-sky-light) 0%,
+    var(--navy-sky-light) 33.33%,
+    var(--navy-sky) 33.33%,
+    var(--navy-sky) 66.66%,
+    var(--navy-sky-dark) 66.66%,
+    var(--navy-sky-dark) 100%
+  );
+  border-color: var(--navy-sky);
+}
+
+body.dark #lengthSlider:hover {
+  border-color: var(--navy-sky-light);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(95, 158, 160, 0.2);
+}
+
+#lengthSlider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: transparent;
 }
 
 #lengthSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--navy-sky);
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--navy-sky) 0%, var(--accent-cyan) 100%);
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(95, 158, 160, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid white;
+  margin-top: -10px;
 }
 
 #lengthSlider::-webkit-slider-thumb:hover {
-  background: var(--navy-sky-dark);
-  transform: scale(1.2);
+  transform: scale(1.15);
+  box-shadow: 0 3px 12px rgba(95, 158, 160, 0.5), 0 0 0 3px rgba(255, 255, 255, 1);
+}
+
+#lengthSlider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+body.dark #lengthSlider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--navy-sky-light) 0%, var(--accent-cyan) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(36, 58, 60, 0.9);
+}
+
+body.dark #lengthSlider::-webkit-slider-thumb:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 0 0 3px rgba(36, 58, 60, 1);
+}
+
+#lengthSlider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
 }
 
 #lengthSlider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--navy-sky);
-  cursor: pointer;
-  border: none;
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--navy-sky) 0%, var(--accent-cyan) 100%);
+  cursor: grab;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(95, 158, 160, 0.4), 0 0 0 3px rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+#lengthSlider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 12px rgba(95, 158, 160, 0.5), 0 0 0 3px rgba(255, 255, 255, 1);
+}
+
+#lengthSlider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+body.dark #lengthSlider::-moz-range-thumb {
+  background: linear-gradient(135deg, var(--navy-sky-light) 0%, var(--accent-cyan) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(36, 58, 60, 0.9);
 }
 
 #lengthLabel {
   font-weight: 600;
   color: var(--navy-sky-dark);
-  min-width: 60px;
-  text-align: center;
+  min-width: 70px;
+  text-align: left;
+  font-size: 0.95rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--navy-sky-lightest);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 body.dark #lengthLabel {
   color: var(--navy-sky-light);
+  background: var(--navy-sky-dark);
 }
 
 /* ======================================================

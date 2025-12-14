@@ -14,52 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedMode = "paragraph";
   let selectedLength = "short";
 
-  /* ----------- MODE SWITCH ----------- */
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      selectedMode = tab.dataset.mode; // "paragraph" or "bullet"
-    });
-  });
-
-  /* ----------- LENGTH SLIDER ----------- */
-  slider.addEventListener("input", () => {
-    selectedLength = slider.value == 1 ? "short" :
-                     slider.value == 2 ? "medium" : "long";
-    lengthLabel.textContent =
-      selectedLength.charAt(0).toUpperCase() + selectedLength.slice(1);
-  });
-
-  /* ----------- WORD COUNT ----------- */
-  textInput.addEventListener("input", () => {
-    const words = textInput.value.trim().split(/\s+/).filter(Boolean);
-    wordCount.textContent = `${words.length} words`;
-  });
-
-  /* ----------- PASTE BTN ----------- */
-  pasteBtn.addEventListener("click", async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      textInput.value = text;
-      const words = text.trim().split(/\s+/).filter(Boolean);
-      wordCount.textContent = `${words.length} words`;
-    } catch (err) {
-      alert("Unable to read clipboard (browser permission denied).");
-    }
-  });
-
-  /* ----------- CLEAR BTN ----------- */
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      textInput.value = "";
-      summaryBox.innerHTML = `<p class="placeholder">Summary result……</p>`;
-      wordCount.textContent = "0 words";
-    });
-  }
-
-  /* ----------- SUMMARIZE ----------- */
-  summarizeBtn.addEventListener("click", async () => {
+  /* ----------- SUMMARIZE FUNCTION (reusable) ----------- */
+  async function performSummarize() {
     const text = textInput.value.trim();
     if (!text) {
       summaryBox.innerHTML = `<p class="placeholder">Please paste or type some text first.</p>`;
@@ -101,7 +57,64 @@ document.addEventListener("DOMContentLoaded", () => {
       pasteBtn.disabled = false;
       if (clearBtn) clearBtn.disabled = false;
     }
+  }
+
+  /* ----------- MODE SWITCH ----------- */
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      selectedMode = tab.dataset.mode; // "paragraph" or "bullet"
+      
+      // Auto-summarize if text exists
+      if (textInput.value.trim()) {
+        performSummarize();
+      }
+    });
   });
+
+  /* ----------- LENGTH SLIDER ----------- */
+  slider.addEventListener("input", () => {
+    selectedLength = slider.value == 1 ? "short" :
+                     slider.value == 2 ? "medium" : "long";
+    lengthLabel.textContent =
+      selectedLength.charAt(0).toUpperCase() + selectedLength.slice(1);
+    
+    // Auto-summarize if text exists
+    if (textInput.value.trim()) {
+      performSummarize();
+    }
+  });
+
+  /* ----------- WORD COUNT ----------- */
+  textInput.addEventListener("input", () => {
+    const words = textInput.value.trim().split(/\s+/).filter(Boolean);
+    wordCount.textContent = `${words.length} words`;
+  });
+
+  /* ----------- PASTE BTN ----------- */
+  pasteBtn.addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      textInput.value = text;
+      const words = text.trim().split(/\s+/).filter(Boolean);
+      wordCount.textContent = `${words.length} words`;
+    } catch (err) {
+      alert("Unable to read clipboard (browser permission denied).");
+    }
+  });
+
+  /* ----------- CLEAR BTN ----------- */
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      textInput.value = "";
+      summaryBox.innerHTML = `<p class="placeholder">Summary result……</p>`;
+      wordCount.textContent = "0 words";
+    });
+  }
+
+  /* ----------- SUMMARIZE BUTTON ----------- */
+  summarizeBtn.addEventListener("click", performSummarize);
 
   /* ----------- COPY BUTTON ----------- */
   copyBtn.addEventListener("click", async () => {
