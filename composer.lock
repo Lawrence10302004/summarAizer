@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a078764756db4b524649c5f02de0c918",
+    "content-hash": "c2cf4da9dac829616146c45a8ac373b6",
     "packages": [
         {
             "name": "php-ai/php-ml",
@@ -71,8 +71,11 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.2"
+        "php": ">=7.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "platform-overrides": {
+        "php": "7.4"
+    },
+    "plugin-api-version": "2.6.0"
 }

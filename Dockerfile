@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy composer files
 COPY composer.json composer.lock ./
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install dependencies (ignore platform requirements for PHP version compatibility)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Copy application files
 COPY . .
