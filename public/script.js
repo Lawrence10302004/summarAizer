@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("mode", selectedMode === "bullet" ? "keypoints" : selectedMode);
 
     try {
-      const res = await fetch("../src/summarize.php", {
+      const res = await fetch("summarize.php", {
         method: "POST",
         body: formData
       });
