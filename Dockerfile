@@ -1,6 +1,16 @@
 # Use PHP 8.2 as base image
 FROM php:8.2-cli
 
+# Install system dependencies (zip, unzip, git)
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP zip extension
+RUN docker-php-ext-install zip
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
