@@ -30,6 +30,6 @@ COPY . .
 # Expose port (Railway will set PORT env variable)
 EXPOSE 8080
 
-# Start PHP built-in server
+# Start PHP built-in server (using shell form to expand PORT variable)
 CMD php -S 0.0.0.0:${PORT:-8080} -t public
 
