@@ -19,79 +19,84 @@
     <button id="themeToggle" class="theme-btn">🌙</button>
   </header>
 
-  <!-- TITLE -->
-  <section class="title-block">
-    <h1>SummarAIzer</h1>
-    <p class="subtitle">Short. Smart. Study-ready.</p>
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="title-block">
+      <h1>SummarAIzer</h1>
+      <p class="subtitle">Short. Smart. Study-ready.</p>
+    </div>
+    <h2 class="headline">Turn long text into short, clear summaries — fast.</h2>
   </section>
 
-  <h2 class="headline">Turn long text into short, clear summaries — fast.</h2>
+  <!-- MAIN CONTAINER -->
+  <div class="main-container">
+    <main class="main-box">
+      <div class="left-panel">
+        <!-- CONTROL BAR -->
+        <div class="control-bar">
+          <div class="control-group">
+            <span class="control-label">Mode:</span>
+            <div class="tabs">
+              <button class="tab active" data-mode="paragraph">Paragraph</button>
+              <button class="tab" data-mode="bullet">Bullet Points</button>
+            </div>
+          </div>
 
-  <!-- MAIN TWO-PANEL CONTAINER -->
-  <main class="main-box">
-    <div class="left-panel">
-
-      <!-- MODE + LENGTH BAR -->
-      <div class="bar">
-
-        <div class="tabs section">
-          <span class="label">Modes:</span>
-          <button class="tab active" data-mode="paragraph">Paragraph</button>
-          <button class="tab" data-mode="bullet">Bullet Points</button>
+          <div class="control-group length-control">
+            <span class="control-label">Length:</span>
+            <div class="slider-container">
+              <input type="range" id="lengthSlider" min="1" max="3" value="1"/>
+              <span id="lengthLabel">Short</span>
+            </div>
+          </div>
         </div>
-
-        <div class="length section">
-          <span class="label">Summary Length:</span>
-          <input type="range" id="lengthSlider" min="1" max="3" value="1"/>
-          <span id="lengthLabel">Short</span>
-        </div>
-
-      </div>
 
       <!-- INPUT BOX -->
       <textarea id="textInput" placeholder='Enter or paste your text here'></textarea>
 
-      <div class="left-controls">
-        <button id="pasteBtn" class="control-btn">Paste Text</button>
-        <p class="word-count" id="wordCount">0 words</p>
-      </div>
+        <div class="left-controls">
+          <button id="pasteBtn" class="control-btn secondary">Paste Text</button>
+          <p class="word-count" id="wordCount">0 words</p>
+        </div>
 
       <button id="summarizeBtn" class="control-btn primary">Summarize</button>
 
     </div>
 
     <div class="right-panel">
-      <div class="summary-header">
-        <h3>Summary Result</h3>
-        <button id="clearBtn" class="control-btn danger">Clear</button>
-      </div>
+        <div class="summary-header">
+          <h3>Summary Result</h3>
+          <button id="clearBtn" class="control-btn danger">Clear</button>
+        </div>
 
-      <div class="summary-box" id="summaryBox">
-        <p class="placeholder">Summary result…</p>
-      </div>
+        <div class="summary-box" id="summaryBox">
+          <p class="placeholder">Summary result…</p>
+        </div>
 
-      <button id="copyBtn" class="control-btn copy">Copy Text</button>
-    </div>
-  </main>
+        <button id="copyBtn" class="control-btn copy">Copy Text</button>
+      </div>
+    </main>
+  </div>
 
   <!-- INFO SECTION -->
   <section class="info-section">
-    <div id="info1">
+    <div class="info-card">
       <h4>How it works</h4>
-      <p>We use a frequency-based extractive summarizer that selects key sentences based on relevance.</p>
+      <p>We use advanced ML algorithms (TF-IDF) to analyze text and extract the most important sentences, creating intelligent summaries that capture key information.</p>
     </div>
 
-    <div id="info2">
+    <div class="info-card">
       <h4>Why it helps students</h4>
       <ul>
         <li>Speeds up reading & note-taking</li>
         <li>Extracts key points from long articles</li>
         <li>Helps with study guides & research</li>
+        <li>Save time on lengthy reading materials</li>
       </ul>
     </div>
 
-    <div id="info3">
-      <h4>Developers:</h4>
+    <div class="info-card">
+      <h4>Developers</h4>
       <ul>
         <li>Tolentino, Cathlene A.</li>
         <li>Tolentino, Lawrence Dave P.</li>
