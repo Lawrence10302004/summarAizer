@@ -247,6 +247,9 @@ body.dark .left-panel {
 
 .right-panel {
   background: linear-gradient(180deg, #F8FCFD 0%, #FFFFFF 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 body.dark .right-panel {
@@ -644,16 +647,59 @@ body.dark .summary-header h3 {
 }
 
 .summary-box {
-  flex: 1;
+  flex: 1 1 auto;
   background: var(--panel-bg-light);
   border: 2px solid var(--navy-sky-lightest);
   border-radius: 12px;
   padding: 1.5rem;
-  min-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: inset 0 2px 4px rgba(95, 158, 160, 0.05);
   line-height: 1.8;
   color: var(--text-light);
+  min-height: 0;
+}
+
+/* Custom scrollbar for summary box */
+.summary-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.summary-box::-webkit-scrollbar-track {
+  background: var(--navy-sky-lightest);
+  border-radius: 4px;
+}
+
+.summary-box::-webkit-scrollbar-thumb {
+  background: var(--navy-sky);
+  border-radius: 4px;
+}
+
+.summary-box::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-sky-dark);
+}
+
+body.dark .summary-box::-webkit-scrollbar-track {
+  background: var(--navy-sky-dark);
+}
+
+body.dark .summary-box::-webkit-scrollbar-thumb {
+  background: var(--navy-sky);
+}
+
+body.dark .summary-box::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-sky-light);
+}
+
+/* Paragraph spacing in summary */
+.summary-box .summary-paragraph {
+  margin: 0 0 1rem 0;
+  padding: 0;
+}
+
+.summary-box .summary-paragraph:last-child {
+  margin-bottom: 0;
 }
 
 body.dark .summary-box {

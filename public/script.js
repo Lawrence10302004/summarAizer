@@ -46,8 +46,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) {
         summaryBox.innerHTML = `<p class="placeholder">Server error: ${res.status} ${res.statusText}<br>${escapeHtml(bodyText)}</p>`;
       } else {
-        // For bullet mode the server returns HTML with <br> (nl2br) — show it raw
-        summaryBox.innerHTML = bodyText.trim() ? bodyText : `<p class="placeholder">No summary returned.</p>`;
+        // Convert <br> tags to paragraphs with spacing for better readability
+        let formattedText = bodyText.trim();
+        if (formattedText) {
+          // Replace <br> tags with paragraph breaks, preserving bullet points
+          formattedText = formattedText.replace(/<br\s*\/?>/gi, '</p><p class="summary-paragraph">');
+          formattedText = '<p class="summary-paragraph">' + formattedText + '</p>';
+          // Clean up empty paragraphs
+          formattedText = formattedText.replace(/<p class="summary-paragraph"><\/p>/g, '');
+        }
+        summaryBox.innerHTML = formattedText || `<p class="placeholder">No summary returned.</p>`;
       }
     } catch (err) {
       summaryBox.innerHTML = `<p class="placeholder">Error connecting to server: ${err.message}</p>`;
@@ -129,10 +137,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ----------- DARK MODE ----------- */
+  // Load dark mode preference from localStorage
+  const savedTheme = localStorage.getItem("darkMode");
+  if (savedTheme === "true") {
+    document.body.classList.add("dark");
+    themeToggle.textContent = "☀️";
+  }
+
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
-    themeToggle.textContent =
-      document.body.classList.contains("dark") ? "☀️" : "🌙";
+    const isDark = document.body.classList.contains("dark");
+    themeToggle.textContent = isDark ? "☀️" : "🌙";
+    // Save preference to localStorage
+    localStorage.setItem("darkMode", isDark ? "true" : "false");
   });
 
   /* small helper to escape HTML for safe display when showing errors */
