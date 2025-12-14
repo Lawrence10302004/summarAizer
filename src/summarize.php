@@ -1,12 +1,16 @@
 <?php
 header("Content-Type: text/html; charset=utf-8");
 
-// Suppress deprecation warnings from vendor library (php-ml uses deprecated ${var} syntax)
-// This will be fixed when the library is updated
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+// Suppress deprecation warnings from vendor library (php-ml uses deprecated ${var} syntax in StopWords.php:28)
+// The warning appears on first click when the class is autoloaded, then disappears on subsequent calls
+// This is harmless - the library still works correctly
+$oldErrorReporting = error_reporting(E_ALL & ~E_DEPRECATED);
 
 // Load Composer autoloader for ML library
 require_once __DIR__ . '/../vendor/autoload.php';
+
+// Restore original error reporting after autoload
+error_reporting($oldErrorReporting);
 
 use Phpml\Tokenization\WordTokenizer;
 use Phpml\FeatureExtraction\StopWords\English;
@@ -29,12 +33,40 @@ if ($text === '') {
     exit;
 }
 
-// Split sentences
-$sentences = preg_split('/(?<=[.?!])\s+/', $text);
-$sentences = array_values(array_filter(array_map('trim', $sentences)));
+// Split text into paragraphs first
+$paragraphs = preg_split('/\n\s*\n/', $text);
+$paragraphs = array_values(array_filter(array_map('trim', $paragraphs)));
+
+// If no paragraph breaks found, treat entire text as one paragraph
+if (count($paragraphs) === 0 && strlen($text) > 0) {
+    $paragraphs = [$text];
+}
+
+// Split each paragraph into sentences and track which paragraph each sentence belongs to
+$sentences = [];
+$sentenceToParagraph = []; // Maps sentence index to paragraph index
+$sentenceIndex = 0;
+
+foreach ($paragraphs as $paraIndex => $paragraph) {
+    $paraSentences = preg_split('/(?<=[.?!])\s+/', $paragraph);
+    $paraSentences = array_values(array_filter(array_map('trim', $paraSentences)));
+    
+    if (empty($paraSentences) && strlen($paragraph) > 0) {
+        // If paragraph has no sentence endings, treat whole paragraph as one sentence
+        $paraSentences = [$paragraph];
+    }
+    
+    foreach ($paraSentences as $sentence) {
+        $sentences[] = $sentence;
+        $sentenceToParagraph[$sentenceIndex] = $paraIndex;
+        $sentenceIndex++;
+    }
+}
+
 $total = count($sentences);
 if ($total === 0 && strlen($text) > 0) {
     $sentences = [$text];
+    $sentenceToParagraph[0] = 0;
     $total = 1;
 }
 
@@ -97,14 +129,37 @@ function pickCountByRatio($ratio, $total) {
     }
 }
 
-// Summarize helper: maintain original order
-function summarizeSentences($topIndexes, $sentences) {
+// Summarize helper: group sentences by paragraph and maintain original order
+function summarizeSentences($topIndexes, $sentences, $sentenceToParagraph) {
     sort($topIndexes);
-    $result = '';
+    
+    // Group selected sentences by their original paragraph
+    $paragraphGroups = [];
     foreach ($topIndexes as $i) {
-        $result .= htmlspecialchars($sentences[$i], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "<br>";
+        $paraIndex = $sentenceToParagraph[$i] ?? 0;
+        if (!isset($paragraphGroups[$paraIndex])) {
+            $paragraphGroups[$paraIndex] = [];
+        }
+        $paragraphGroups[$paraIndex][] = $i;
     }
-    return trim($result);
+    
+    // Sort paragraphs by their original order
+    ksort($paragraphGroups);
+    
+    // Build result: sentences within same paragraph are grouped, paragraphs are separated
+    $result = '';
+    foreach ($paragraphGroups as $paraIndex => $sentenceIndexes) {
+        $paragraphText = '';
+        foreach ($sentenceIndexes as $i) {
+            if ($paragraphText !== '') {
+                $paragraphText .= ' '; // Space between sentences in same paragraph
+            }
+            $paragraphText .= htmlspecialchars($sentences[$i], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+        $result .= '<p class="summary-paragraph">' . $paragraphText . '</p>';
+    }
+    
+    return $result;
 }
 
 // Controlled variation: add tiny random noise for tie-breaking
@@ -120,7 +175,7 @@ arsort($scoreNoise);
 if ($mode === 'paragraph') {
     $summaryLength = pickCountByRatio($ratio, $total);
     $topIndexes = array_slice(array_keys($scoreNoise), 0, $summaryLength);
-    echo summarizeSentences($topIndexes, $sentences);
+    echo summarizeSentences($topIndexes, $sentences, $sentenceToParagraph);
     exit;
 }
 
@@ -129,11 +184,34 @@ if ($mode === 'keypoints' || $mode === 'bullet') {
     $keyCount = pickCountByRatio($ratio, $total);
     $topIndexes = array_slice(array_keys($scoreNoise), 0, $keyCount);
     sort($topIndexes);
-    $result = '';
+    
+    // Group bullet points by paragraph
+    $paragraphGroups = [];
     foreach ($topIndexes as $i) {
-        $result .= "• " . htmlspecialchars($sentences[$i], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "<br>";
+        $paraIndex = $sentenceToParagraph[$i] ?? 0;
+        if (!isset($paragraphGroups[$paraIndex])) {
+            $paragraphGroups[$paraIndex] = [];
+        }
+        $paragraphGroups[$paraIndex][] = $i;
     }
-    echo trim($result);
+    
+    // Sort paragraphs by their original order
+    ksort($paragraphGroups);
+    
+    // Build result: bullets within same paragraph are grouped, paragraphs are separated
+    $result = '';
+    foreach ($paragraphGroups as $paraIndex => $sentenceIndexes) {
+        $paragraphText = '';
+        foreach ($sentenceIndexes as $i) {
+            if ($paragraphText !== '') {
+                $paragraphText .= '<br>'; // Line break between bullets in same paragraph
+            }
+            $paragraphText .= "• " . htmlspecialchars($sentences[$i], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+        $result .= '<p class="summary-paragraph">' . $paragraphText . '</p>';
+    }
+    
+    echo $result;
     exit;
 }
 
@@ -146,7 +224,7 @@ if ($mode === 'custom') {
     }
     $customCount = min($customCount, $total);
     $topIndexes = array_slice(array_keys($scoreNoise), 0, $customCount);
-    echo summarizeSentences($topIndexes, $sentences);
+    echo summarizeSentences($topIndexes, $sentences, $sentenceToParagraph);
     exit;
 }
 

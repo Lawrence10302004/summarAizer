@@ -46,16 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) {
         summaryBox.innerHTML = `<p class="placeholder">Server error: ${res.status} ${res.statusText}<br>${escapeHtml(bodyText)}</p>`;
       } else {
-        // Convert <br> tags to paragraphs with spacing for better readability
-        let formattedText = bodyText.trim();
-        if (formattedText) {
-          // Replace <br> tags with paragraph breaks, preserving bullet points
-          formattedText = formattedText.replace(/<br\s*\/?>/gi, '</p><p class="summary-paragraph">');
-          formattedText = '<p class="summary-paragraph">' + formattedText + '</p>';
-          // Clean up empty paragraphs
-          formattedText = formattedText.replace(/<p class="summary-paragraph"><\/p>/g, '');
-        }
-        summaryBox.innerHTML = formattedText || `<p class="placeholder">No summary returned.</p>`;
+        // Server now returns properly formatted paragraphs, just display it
+        summaryBox.innerHTML = bodyText.trim() || `<p class="placeholder">No summary returned.</p>`;
       }
     } catch (err) {
       summaryBox.innerHTML = `<p class="placeholder">Error connecting to server: ${err.message}</p>`;
