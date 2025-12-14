@@ -2,15 +2,13 @@
 header("Content-Type: text/html; charset=utf-8");
 
 // Suppress deprecation warnings from vendor library (php-ml uses deprecated ${var} syntax in StopWords.php:28)
-// The warning appears on first click when the class is autoloaded, then disappears on subsequent calls
-// This is harmless - the library still works correctly
-$oldErrorReporting = error_reporting(E_ALL & ~E_DEPRECATED);
+// This warning appears when the StopWords class is used - keep suppression active throughout execution
+// The library still works correctly, this is just a PHP 8.2+ deprecation notice
+// We suppress E_DEPRECATED but keep other errors visible for debugging
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 
 // Load Composer autoloader for ML library
 require_once __DIR__ . '/../vendor/autoload.php';
-
-// Restore original error reporting after autoload
-error_reporting($oldErrorReporting);
 
 use Phpml\Tokenization\WordTokenizer;
 use Phpml\FeatureExtraction\StopWords\English;
