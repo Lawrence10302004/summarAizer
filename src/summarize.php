@@ -1,6 +1,10 @@
 <?php
 header("Content-Type: text/html; charset=utf-8");
 
+// Suppress deprecation warnings from vendor library (php-ml uses deprecated ${var} syntax)
+// This will be fixed when the library is updated
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+
 // Load Composer autoloader for ML library
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -122,7 +126,7 @@ if ($mode === 'paragraph') {
 
 // Keypoints/bullet mode
 if ($mode === 'keypoints' || $mode === 'bullet') {
-    $keyCount = max(2, (int)round($total * 0.4));
+    $keyCount = pickCountByRatio($ratio, $total);
     $topIndexes = array_slice(array_keys($scoreNoise), 0, $keyCount);
     sort($topIndexes);
     $result = '';
